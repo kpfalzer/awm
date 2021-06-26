@@ -1,0 +1,9 @@
+<component name="ArtifactManager">
+  <artifact type="jar" name="awm:jar">
+    <output-path>$PROJECT_DIR$/out/artifacts/awm_jar</output-path>
+    <root id="archive" name="awm.jar">
+      <element id="module-output" name="awm" />
+      <element id="module-output" name="gblibx" />
+    </root>
+  </artifact>
+</component>
