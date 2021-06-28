@@ -1,0 +1,9 @@
+#!/bin/bash
+
+export AWM_JOBID=666
+source etc/awm.sh
+awmDumpStatsLoop &
+
+sleep 5
+
+exit 0
