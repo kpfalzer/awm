@@ -2,7 +2,7 @@
 
 export AWM_JOBID=666
 source etc/awm.sh
-awmDumpStatsLoop &
+awmStartDumpStats
 
 sleep 5
 

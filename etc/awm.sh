@@ -70,11 +70,22 @@ function awmDumpStatsLoop() {
 	done
 }
 
+function awmStartDumpStats() {
+	awmDumpStatsLoop &
+}
+
 function awmCleanup() {
+	local sig=${1:-TERM}	
+	awmDumpStats  #one before quit
 	# Since dumpStats is subshell (different process), we need to find out the child pids and kill
 	local cpids=$(${awmConf[ps]} --ppid ${awmConf[pid]} -o pid --no-headers)
 	for cpid in $cpids ; do
-		kill -s TERM $cpid 2>/dev/null
+		kill -s $sig $cpid 2>/dev/null
+		if [[ 0 != $? ]]; then
+			if [[ -d /proc/$cpid ]]; then
+				echo "${FUNCNAME[0]}: warn: Could not kill -s ${sig}: $(${awmConf[ps]} -p $cpid -o pid,comm --no-headers)"
+			fi
+		fi
 	done
 }
 
