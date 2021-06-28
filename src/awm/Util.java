@@ -1,7 +1,5 @@
 package awm;
 
-import awm.node.AwmException;
-
 import java.io.File;
 
 import static gblibx.Util.invariant;
@@ -52,6 +50,10 @@ public class Util {
                 invariant(false, String.format("%c: expected one of r|w|x", perm));
         }
         return false;
+    }
+
+    public static void throwException(Exception ex) {
+        throw new AwmException(ex);
     }
 
     public static void throwException(String key, Object... args) {

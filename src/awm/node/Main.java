@@ -1,5 +1,7 @@
 package awm.node;
 
+import awm.Logger;
+
 /**
  * Main for node.
  */

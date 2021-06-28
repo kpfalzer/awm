@@ -1,6 +1,5 @@
-package awm.node;
+package awm;
 
-import gblibx.FileLogger;
 import gblibx.MultiLogger;
 
 import java.io.File;

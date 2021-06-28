@@ -4,6 +4,7 @@
     <root id="archive" name="awm.jar">
       <element id="module-output" name="awm" />
       <element id="module-output" name="gblibx" />
+      <element id="module-output" name="jmvc" />
     </root>
   </artifact>
 </component>

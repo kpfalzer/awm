@@ -4,6 +4,7 @@
     <modules>
       <module fileurl="file://$PROJECT_DIR$/awm.iml" filepath="$PROJECT_DIR$/awm.iml" />
       <module fileurl="file://$PROJECT_DIR$/../gblibx/gblibx.iml" filepath="$PROJECT_DIR$/../gblibx/gblibx.iml" />
+      <module fileurl="file://$PROJECT_DIR$/../jmvc/jmvc.iml" filepath="$PROJECT_DIR$/../jmvc/jmvc.iml" />
     </modules>
   </component>
 </project>
