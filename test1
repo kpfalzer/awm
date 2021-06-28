@@ -5,5 +5,9 @@ source etc/awm.sh
 awmStartDumpStats
 
 sleep 5
+touch hello-world
+ls -l hello-world
+sleep 5
+umask
 
 exit 0

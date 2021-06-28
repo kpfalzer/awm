@@ -11,15 +11,25 @@ awmConf[host]=$(${awmConf[hostname]})
 awmConf[user]=$USER
 awmConf[jobid]=${AWM_JOBID:-0}
 awmConf[nodeDumpT]=${AWM_NODE_DUMP_T:-5}
+awmConf[umask]=$(umask -p)
 
-function awmNowUTC() {
+function awmTimestamp {
+	echo "$(${awmConf[date]} +%k:%M:%S-%a-%d-%b-%Y-%Z)"	
+}
+
+function awmMessage {
+	local m=$1
+	echo "$(awmTimestamp): $m"
+}
+
+function awmNowUTC {
 	echo "$(${awmConf[date]} -u)"	
 }
 
 awmConf[started]=$(awmNowUTC)
 
 # Parameter is varname (not value)
-function awmMapToJson() {
+function awmMapToJson {
 	local raw=$(declare -p "$1")
 	eval "declare -A _map="${raw#*=}
 	local json=""
@@ -35,7 +45,7 @@ function awmMapToJson() {
 	echo '{'$json'}'
 }
 
-function awmCpuTime() {
+function awmCpuTime {
 	local pid=${awmConf[pid]}
 	read -r -a times < /proc/$pid/stat
 	# utime + stime + cutime + cstime (i.e., this process + children)
@@ -43,7 +53,7 @@ function awmCpuTime() {
 	echo $tl
 }
 
-function awmProcStatus() {
+function awmProcStatus {
 	local pid=${awmConf[pid]}
 	while read -r f1 f2 f3; do
 		if [[ "$f1" == "VmPeak:" ]]; then
@@ -52,7 +62,7 @@ function awmProcStatus() {
 	done < /proc/$pid/status
 }
 
-function awmDumpStats() {
+function awmDumpStats {
 	declare -A stats
 	stats[now]=$(awmNowUTC)
 	stats[cpuTime]=$(awmCpuTime)
@@ -60,33 +70,51 @@ function awmDumpStats() {
 	for k in started clkTics host pid user jobid; do
 		stats[$k]=${awmConf[$k]}
 	done
+	umask 0077
 	awmMapToJson stats > ${awmConf[statsJSON]}
+	$(${awmConf[umask]})
 }
 
-function awmDumpStatsLoop() {
+function awmDumpStatsLoop {
 	while true; do
 		awmDumpStats
 		sleep ${awmConf[nodeDumpT]}
 	done
 }
 
-function awmStartDumpStats() {
+function awmStartDumpStats {
 	awmDumpStatsLoop &
 }
 
-function awmCleanup() {
-	local sig=${1:-TERM}	
-	awmDumpStats  #one before quit
-	# Since dumpStats is subshell (different process), we need to find out the child pids and kill
-	local cpids=$(${awmConf[ps]} --ppid ${awmConf[pid]} -o pid --no-headers)
-	for cpid in $cpids ; do
-		kill -s $sig $cpid 2>/dev/null
-		if [[ 0 != $? ]]; then
-			if [[ -d /proc/$cpid ]]; then
-				echo "${FUNCNAME[0]}: warn: Could not kill -s ${sig}: $(${awmConf[ps]} -p $cpid -o pid,comm --no-headers)"
-			fi
+function awmKillPID {
+	local pid=$1
+	local sig=${2:-TERM}
+	kill -s $sig $pid 2>/dev/null
+	if [[ 0 != $? ]]; then
+		if [[ -d /proc/$cpid ]]; then
+			awmMessage "${FUNCNAME[0]}: warn: Could not kill -s ${sig} ${cpid}: $(${awmConf[ps]} -p $cpid -o comm --no-headers)"
 		fi
-	done
+	fi
 }
 
-trap 'awmCleanup' SIGINT TERM EXIT
+# Recursively kill children and then parent.
+function awmKillAll {
+	local pid=$1
+	local sig=${2:-TERM}
+	local cpids=$(${awmConf[ps]} --ppid $pid -o pid --no-headers)
+	for cpid in $cpids ; do
+		awmKillAll $cpid $sig
+	done
+	awmKillPID $pid $sig
+}
+
+function awmCleanup {
+	local doKill=${1:-false}
+	local sig=${2:-TERM}	
+	awmDumpStats  #one before quit
+	if $doKill ; then awmKillAll ${awmConf[pid]} $sig ; fi
+}
+
+# Even on normal exit, want to be sure to cleanup the awmDumpStatsLoop (and all children too)
+trap 'awmCleanup true'   EXIT
+trap 'awmCleanup true'   SIGINT TERM
