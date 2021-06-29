@@ -31,7 +31,7 @@ public class Server {
 
     private void xstart() {
         try {
-            __server = new MtHttpServer("localhost", 3005);
+            __server = new MtHttpServer(__host, __port);
             __server.addRoute("/subcmd/run", new Run() {
             });
             __server.start();

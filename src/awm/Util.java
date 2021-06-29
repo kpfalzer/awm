@@ -63,4 +63,8 @@ public class Util {
     public static String message(String key, Object... args) {
         return Message.get(key, args);
     }
+
+    public static String spacify(String s) {
+        return s.replace("&nbsp;", " ");
+    }
 }
