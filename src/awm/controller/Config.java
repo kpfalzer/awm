@@ -1,9 +1,13 @@
 package awm.controller;
 
+import awm.AwmProps;
+import awm.Util;
+
 public class Config {
-    public static final String HOST = System.getProperty("awm.controller.server.HOST", "localhost");
+    public static final String HOST = AwmProps.getProperty(
+            "awm.controller.server.HOST", Util.hostname());
     public static final int PORT = Integer.parseInt(
-            System.getProperty("awm.controller.server.PORT", "3010")
+            AwmProps.getProperty("awm.controller.server.PORT", "3010")
     );
 
 }

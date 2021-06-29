@@ -1,6 +1,7 @@
-package awm.controller;
+package awm.node;
 
-import awm.controller.subcommand.Run;
+import awm.node.Config;
+import awm.node.subcommand.Run;
 import jmvc.server.MtHttpServer;
 
 import java.io.IOException;
@@ -8,7 +9,7 @@ import java.io.IOException;
 import static awm.Util.throwException;
 
 /**
- * Central controller for AWM.
+ * Node server.
  */
 public class Server {
     public static void start(String host, int port) {
@@ -22,18 +23,17 @@ public class Server {
     public Server(String host, int port) {
         __host = host;
         __port = port;
-        __start();
+        xstart();
     }
 
     public Server() {
-        this(Config.HOST, Config.PORT);
+        this(awm.node.Config.HOST, Config.PORT);
     }
 
-    private void __start() {
+    private void xstart() {
         try {
             __server = new MtHttpServer(__host, __port);
-            __server.addRoute("/subcmd/run", new Run() {
-            });
+            __server.addRoute("/subcmd/run", null);//todo new Run() {});
             __server.start();
             Thread.currentThread().join();
         } catch (IOException | InterruptedException e) {

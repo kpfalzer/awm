@@ -9,7 +9,7 @@ import static awm.Util.createDirectory;
 import static awm.Util.throwException;
 
 /**
- * Logger for node messages.
+ * Logger for messages.
  */
 public class Logger {
     public Logger(File fname, boolean useConsoleToo) {

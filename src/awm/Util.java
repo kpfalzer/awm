@@ -2,9 +2,14 @@ package awm;
 
 import java.io.File;
 
+import static gblibx.RunCmd.runCommandStdout;
 import static gblibx.Util.invariant;
 
 public class Util {
+    public static String hostname() {
+        return runCommandStdout("/bin/hostname -s");
+    }
+
     /**
      * Check if directory exists or create if not.
      *
@@ -66,5 +71,10 @@ public class Util {
 
     public static String spacify(String s) {
         return s.replace("&nbsp;", " ");
+    }
+
+    public static void fatal(Exception e) {
+        e.printStackTrace(System.err);
+        System.exit(1);
     }
 }
