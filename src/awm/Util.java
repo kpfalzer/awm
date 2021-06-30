@@ -1,6 +1,7 @@
 package awm;
 
-import java.io.File;
+import java.io.*;
+import java.util.Map;
 
 import static gblibx.RunCmd.runCommandStdout;
 import static gblibx.Util.invariant;
@@ -76,5 +77,22 @@ public class Util {
     public static void fatal(Exception e) {
         e.printStackTrace(System.err);
         System.exit(1);
+    }
+
+    public static String getUserName() {
+        return System.getProperty("user.name");
+    }
+
+    public static Map<String, Object> addUserName(Map<String, Object> kvs) {
+        kvs.put("user", getUserName());
+        return kvs;
+    }
+
+    public static BufferedReader toBufferedReader(InputStream ins) {
+        return new BufferedReader(new InputStreamReader(ins));
+    }
+
+    public static PrintStream toPrintStream(OutputStream os) {
+        return new PrintStream(os);
     }
 }

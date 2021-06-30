@@ -1,34 +1,64 @@
 package awm.node.subcommand;
 
+import com.sun.net.httpserver.HttpExchange;
 import gblibx.RunCmd;
+import jmvc.server.RequestHandler;
 
 import java.io.IOException;
+import java.io.PrintStream;
+import java.util.Arrays;
+import java.util.List;
+import java.util.Map;
 
-public class Run {
-    public static class NodeRun {
-        public static void run(String user, String command) {
-            new NodeRun(user, command);
-        }
+import static awm.Util.toPrintStream;
+import static gblibx.Util.castobj;
+import static gblibx.Util.invariant;
 
-        public NodeRun(String user, String command) {
+public class Run extends RequestHandler {
+    @Override
+    public void handle(HttpExchange httpExchange) throws IOException {
+        initialize(httpExchange);
+        invariant(isPOST());//todo
+        __params = bodyAsObj();
+        __ostream = toPrintStream(httpExchange.getResponseBody());
+        execute();
+        //todo: upload result to server
+    }
+
+    private Map<String, Object> __params;
+    private PrintStream __ostream;
+    private int __exitValue = -1;
+
+    private Run execute() {
+        new NodeRun();
+        return this;
+    }
+
+    private class NodeRun {
+        public NodeRun() {
+            final String user = castobj(__params.get("user"));
+            final String command = castobj(__params.get("command"));
             __builder = new ProcessBuilder(__RUNUSER, "-u", user, command);
             __builder.environment().put("AWM_SERVER", "value-for-server");
             __builder.redirectErrorStream(true);
-            __builder.redirectOutput(ProcessBuilder.Redirect.INHERIT);
             try {
-                final Process p = __builder.start();
-            } catch (IOException e) {
+                final Process proc = __builder.start();
+                List<Thread> threads = Arrays.asList(
+                        new Thread(new RunCmd.StreamGobbler(proc.getInputStream(), (line) -> {
+                            __ostream.println(line);
+                        }))
+                );
+                threads.forEach(Thread::start);
+                proc.waitFor();
+                for (Thread thread : threads) thread.join();
+                __exitValue = proc.exitValue();
+            } catch (IOException | InterruptedException e) {
                 e.printStackTrace();
             }
         }
 
         private ProcessBuilder __builder;
         private static final String __RUNUSER = "/usr/sbin/runuser";
-
-        public static void main(String[] argv) {
-            //NodeRun.run(argv[0], argv[1]);
-            RunCmd.runCommand(String.format("%s -u %s %s", __RUNUSER, argv[0], argv[1]));
-        }
     }
 
 }

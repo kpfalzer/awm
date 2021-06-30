@@ -2,8 +2,9 @@ package awm.subcommand;
 
 import java.util.Map;
 
-import static awm.Util.spacify;
+import static awm.Util.*;
 import static gblibx.Util.invariant;
+import static gblibx.Util.toMap;
 
 public class Run {
     /**
@@ -14,18 +15,41 @@ public class Run {
      * 3.1) or details why cannot be run.
      * 4) collect response and send request to (designated) node.
      */
-    private Run execute(Object... kvs) {
-        Map<String, Object> cntlReponse = ControllerRequest.request(CMD, kvs);
-        //todo
+    private Run execute() {
+        return controllerRequest().checkControllerResponse().nodeRequest();
+    }
+
+    private Run controllerRequest() {
+        __cntlResponse = ControllerRequest.request(CMD, __reqParams);
         return this;
+    }
+
+    private Run checkControllerResponse() {
+        //todo: check __runParams;
+        addUserName(__cntlResponse);
+        return this;
+    }
+
+    private Run nodeRequest() {
+        //todo: perhaps add in mem, timeout, ...
+        //NOTE: mem could be ulimit?
+        return this;
+    }
+
+    private Map<String, Object> __reqParams;
+    private Map<String, Object> __cntlResponse;
+
+    private Run(String... kvs) {
+        __reqParams = toMap(kvs);
+        addUserName(__reqParams);
     }
 
     public static void execute(String[] argv) {
         invariant(2 == argv.length);
-        final Run run = new Run().execute("command", spacify(argv[1]), "user", __USER);
+        final Run run = new Run("command", spacify(argv[1])).execute();
         boolean todo = true;
     }
 
     public static final String CMD = "run";
-    private static String __USER = System.getProperty("user.name");
+    private static String __USER = getUserName();
 }

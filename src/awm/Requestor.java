@@ -5,22 +5,18 @@ import gblibx.HttpConnection;
 import java.util.Map;
 
 import static awm.Util.throwException;
-import static gblibx.Util.invariant;
-import static gblibx.Util.toMap;
+import static gblibx.Util.*;
 
 public abstract class Requestor {
+
     protected Requestor(String subcmd) {
-        __route = "/subcmd/" + subcmd;
+        _route = "/subcmd/" + subcmd;
     }
 
-    protected Map<String, Object> request(Object... kvs) {
-        return request(toMap(kvs));
-    }
-
-    protected Map<String, Object> request(Map<String, Object> params) {
+    protected  Map<String,Object> request(Map<String,Object> params) {
         try {
             //TODO: enhance post() to specify timeouts...
-            return HttpConnection.postJSON(getHost(), getPort(), __route, params);
+            return HttpConnection.postJSON(getHost(), getPort(), _route, params);
         } catch (HttpConnection.Exception e) {
             throwException(e);
         }
@@ -32,5 +28,5 @@ public abstract class Requestor {
 
     protected abstract int getPort();
 
-    private final String __route;
+    protected final String _route;
 }
