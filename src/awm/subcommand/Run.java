@@ -46,13 +46,13 @@ public class Run {
     private Map<String, Object> __cntlResponse;
 
     private Run(String... kvs) {
-        __reqParams = toMap(kvs);
+        __reqParams = toMap((Object[])kvs);
         addUserName(__reqParams);
     }
 
     public static void execute(String[] argv) {
-        invariant(2 == argv.length);
-        final Run run = new Run("command", spacify(argv[1])).execute();
+        invariant(2 <= argv.length);
+        final Run run = new Run("command", joinArgs(argv, 1)).execute();
         boolean todo = true;
     }
 

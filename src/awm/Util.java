@@ -1,7 +1,10 @@
 package awm;
 
 import java.io.*;
+import java.util.Arrays;
 import java.util.Map;
+import java.util.stream.Collectors;
+import java.util.stream.Stream;
 
 import static gblibx.RunCmd.runCommandStdout;
 import static gblibx.Util.invariant;
@@ -72,6 +75,17 @@ public class Util {
 
     public static String spacify(String s) {
         return s.replace("&nbsp;", " ");
+    }
+
+    public static final String CMD_JOIN = "&nbsp;";
+
+    public static String joinArgs(String[] args, int start) {
+        return Stream.of(Arrays.copyOfRange(args, start, args.length))
+                .collect(Collectors.joining(CMD_JOIN));
+    }
+
+    public static String[] splitArgs(String s) {
+        return s.split(CMD_JOIN);
     }
 
     public static void fatal(Exception e) {

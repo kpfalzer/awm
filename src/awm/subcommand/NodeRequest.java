@@ -17,6 +17,7 @@ import static awm.Util.throwException;
 import static awm.Util.toBufferedReader;
 import static gblibx.Util.invariant;
 import static gblibx.Util.toMap;
+import static java.net.HttpURLConnection.HTTP_OK;
 
 /**
  * Node request.
@@ -48,11 +49,12 @@ public class NodeRequest extends Requestor {
         try {
             HttpConnection.postJSON(getHost(), getPort(), _route, params, (http) -> {
                 try {
-                    int resp = http.getResponseCode();
+                    invariant(HTTP_OK == http.getResponseCode());
                     if (true) {
                         //null: InputStream cerr = http.getErrorStream();
                         InputStream cout = http.getInputStream();
                         BufferedReader rdr = toBufferedReader(cout);
+                        //while (! rdr.ready()) ;
                         rdr.lines().forEach((line)->{
                             readers[0].accept(line);
                         });

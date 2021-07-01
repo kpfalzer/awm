@@ -11,9 +11,8 @@ import java.util.Arrays;
 import java.util.List;
 import java.util.Map;
 
-import static awm.Util.toPrintStream;
-import static gblibx.Util.castobj;
-import static gblibx.Util.invariant;
+import static awm.Util.*;
+import static gblibx.Util.*;
 import static java.net.HttpURLConnection.HTTP_OK;
 
 /**
@@ -25,10 +24,9 @@ public class Run extends RequestHandler {
     public void handle(HttpExchange httpExchange) throws IOException {
         initialize(httpExchange);
         invariant(isPOST());//todo
-        __params = bodyAsObj();
+        __params = castobj(bodyAsObj());
         //got what we need, so lets start response
         responseHeader();
-        __ostream = toPrintStream(httpExchange.getResponseBody());
         //__ostream.println("DEBUG1");
         //__ostream.flush(); //need flush()
         execute();
@@ -41,7 +39,7 @@ public class Run extends RequestHandler {
         _exchange.sendResponseHeaders(HTTP_OK, 0);
     }
 
-    private Map<String, Object> __params;
+    private Map<String, String> __params;
     private PrintStream __ostream;
     private int __exitValue = -1;
 
@@ -53,13 +51,19 @@ public class Run extends RequestHandler {
     //todo: extend RunCmd!
 
     private class NodeRun {
+        private List<String> getCmdArgs() {
+            List<String> args = toList(__RUNUSER, "-u", __params.get("user"));
+            List<String> cmd = toList(splitArgs(__params.get("command")));
+            args.addAll(cmd);
+            return args;
+        }
+
         public NodeRun() {
-            final String user = castobj(__params.get("user"));
-            final String command = castobj(__params.get("command"));
-            __builder = new ProcessBuilder(__RUNUSER, "-u", user, command);
+            __builder = new ProcessBuilder(getCmdArgs());
             __builder.environment().put("AWM_SERVER", "value-for-server");
             try {
                 final Process proc = __builder.start();
+                __ostream = toPrintStream(_exchange.getResponseBody());
                 List<Thread> threads = Arrays.asList(
                         new Thread(new RunCmd.StreamGobbler(proc.getInputStream(), (line) -> {
                             __ostream.println(line);
@@ -73,9 +77,10 @@ public class Run extends RequestHandler {
                 threads.forEach(Thread::start);
                 proc.waitFor();
                 for (Thread thread : threads) thread.join();
+                _exchange.close();
                 __exitValue = proc.exitValue();
             } catch (IOException | InterruptedException e) {
-                e.printStackTrace();
+                throwException(e);
             }
         }
 
