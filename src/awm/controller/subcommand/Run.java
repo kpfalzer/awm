@@ -15,11 +15,13 @@ public class Run extends RequestHandler {
         //nothing
     }
 
+    private Map<String,Object> __request;
+
     @Override
     public void handle(HttpExchange httpExchange) throws IOException {
         initialize(httpExchange);
         invariant(isPOST());//todo
-        Map<String, Object> request = bodyAsObj();
+        __request = bodyAsObj();
         boolean todo = true;
         //todo: do something with request
         respond();
@@ -28,8 +30,8 @@ public class Run extends RequestHandler {
     private void respond() {
         JSONObject json = new JSONObject();
         json.put("jobid", 123)
-                .put("node", "vm01")
-                .put("command", "hostname -s")
+                .put("node", "localhost")
+                .put("command", __request.get("command"))
         ;
         try {
             sendJsonResponse(json.toString());

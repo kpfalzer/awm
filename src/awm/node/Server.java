@@ -1,6 +1,5 @@
 package awm.node;
 
-import awm.node.Config;
 import awm.node.subcommand.Run;
 import jmvc.server.MtHttpServer;
 
@@ -23,17 +22,18 @@ public class Server {
     public Server(String host, int port) {
         __host = host;
         __port = port;
-        xstart();
+        __start();
     }
 
     public Server() {
         this(awm.node.Config.HOST, Config.PORT);
     }
 
-    private void xstart() {
+    private void __start() {
         try {
             __server = new MtHttpServer(__host, __port);
-            __server.addRoute("/subcmd/run", null);//todo new Run() {});
+            __server.addRoute("/subcmd/run", new Run() {
+            });
             __server.start();
             Thread.currentThread().join();
         } catch (IOException | InterruptedException e) {
@@ -44,4 +44,8 @@ public class Server {
     private final String __host;
     private final int __port;
     private MtHttpServer __server;
+
+    public static void main(String[] argv) {
+        start();
+    }
 }

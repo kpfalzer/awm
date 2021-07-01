@@ -1,10 +1,10 @@
 package awm.subcommand;
 
 import java.util.Map;
+import java.util.function.Consumer;
 
 import static awm.Util.*;
-import static gblibx.Util.invariant;
-import static gblibx.Util.toMap;
+import static gblibx.Util.*;
 
 public class Run {
     /**
@@ -30,9 +30,15 @@ public class Run {
         return this;
     }
 
+    private static final Consumer<String>[] __READERS = new Consumer[]{
+            System.out::println, System.err::println
+    };
+
     private Run nodeRequest() {
         //todo: perhaps add in mem, timeout, ...
         //NOTE: mem could be ulimit?
+        final String toHost = castobj(__cntlResponse.get("node"));
+        NodeRequest.request(CMD, toHost, __cntlResponse, __READERS);
         return this;
     }
 
