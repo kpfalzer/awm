@@ -7,11 +7,11 @@ import jmvc.server.RequestHandler;
 
 import java.io.IOException;
 import java.io.PrintStream;
-import java.util.Arrays;
 import java.util.List;
 import java.util.Map;
 
-import static awm.Util.*;
+import static awm.Util.splitArgs;
+import static awm.Util.toPrintStream;
 import static gblibx.Util.*;
 import static java.net.HttpURLConnection.HTTP_OK;
 
@@ -22,69 +22,61 @@ import static java.net.HttpURLConnection.HTTP_OK;
 public class Run extends RequestHandler {
     @Override
     public void handle(HttpExchange httpExchange) throws IOException {
+        System.err.println("DEBUG: Run.handle starts");
         initialize(httpExchange);
         invariant(isPOST());//todo
         __params = castobj(bodyAsObj());
-        //got what we need, so lets start response
-        responseHeader();
-        //__ostream.println("DEBUG1");
-        //__ostream.flush(); //need flush()
-        execute();
+        responseHeader().execute();
         //todo: upload result to server
     }
 
-    private void responseHeader() throws IOException {
+    private Run responseHeader() throws IOException {
         final Headers headers = _exchange.getResponseHeaders();
-        headers.add("Transfer-Encoding", "chunked");
+        headers.add("Transfer-Encoding", "chunked");  //continuous response
         _exchange.sendResponseHeaders(HTTP_OK, 0);
+        return this;
     }
 
     private Map<String, String> __params;
     private PrintStream __ostream;
-    private int __exitValue = -1;
+    private Pair<Boolean,Integer> __exitVal;
 
     private Run execute() {
-        new NodeRun();
+        final NodeRun nrun = new NodeRun();
+        System.err.println("DEBUG: Run.execute run...");
+        nrun.run();
+        _exchange.close();
+        __exitVal = new Pair<>(nrun.isNormalExit(), nrun.getExitValue());
         return this;
     }
 
-    //todo: extend RunCmd!
+    private List<String> getCmdArgs() {
+        List<String> args = toList(__RUNUSER, "-u", __params.get("user"));
+        List<String> cmd = toList(splitArgs(__params.get("command")));
+        args.addAll(cmd);
+        return args;
+    }
 
-    private class NodeRun {
-        private List<String> getCmdArgs() {
-            List<String> args = toList(__RUNUSER, "-u", __params.get("user"));
-            List<String> cmd = toList(splitArgs(__params.get("command")));
-            args.addAll(cmd);
-            return args;
+    private class NodeRun extends RunCmd {
+
+        private NodeRun() {
+            super(getCmdArgs(), null, null);
+            initialize();
         }
 
-        public NodeRun() {
-            __builder = new ProcessBuilder(getCmdArgs());
-            __builder.environment().put("AWM_SERVER", "value-for-server");
-            try {
-                final Process proc = __builder.start();
-                __ostream = toPrintStream(_exchange.getResponseBody());
-                List<Thread> threads = Arrays.asList(
-                        new Thread(new RunCmd.StreamGobbler(proc.getInputStream(), (line) -> {
-                            __ostream.println(line);
-                            __ostream.flush(); //need flush()
-                        })),
-                        new Thread(new RunCmd.StreamGobbler(proc.getErrorStream(), (line) -> {
-                            __ostream.println("ERROR: " + line);
-                            __ostream.flush(); //!!
-                        }))
-                );
-                threads.forEach(Thread::start);
-                proc.waitFor();
-                for (Thread thread : threads) thread.join();
-                _exchange.close();
-                __exitValue = proc.exitValue();
-            } catch (IOException | InterruptedException e) {
-                throwException(e);
-            }
+        private NodeRun initialize() {
+            _builder.environment().put("AWM_SERVER", "value-for-server");
+            __ostream = toPrintStream(_exchange.getResponseBody());
+            setCout((line) -> {
+                __ostream.println(line);
+                __ostream.flush();
+            });
+            setCerr((line) -> {
+                __ostream.println("ERROR: " + line);
+                __ostream.flush();
+            });
+            return this;
         }
-
-        private ProcessBuilder __builder;
     }
 
     private static final String __RUNUSER;

@@ -5,6 +5,7 @@
       <element id="module-output" name="awm" />
       <element id="module-output" name="gblibx" />
       <element id="module-output" name="jmvc" />
+      <element id="extracted-dir" path="$PROJECT_DIR$/../gblibx/lib/json-20180130.jar" path-in-jar="/" />
     </root>
   </artifact>
 </component>

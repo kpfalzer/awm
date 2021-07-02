@@ -19,7 +19,7 @@ public class Config {
     public static final String HOST = AwmProps.getProperty(
             "awm.node.server.HOST", Util.hostname());
     public static final int PORT = Integer.parseInt(
-            AwmProps.getProperty("awm.node.server.PORT", "3011")
+            AwmProps.getProperty("awm.node.server.PORT", "6818")
     );
 
 }

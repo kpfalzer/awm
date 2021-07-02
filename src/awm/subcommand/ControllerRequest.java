@@ -20,6 +20,7 @@ public class ControllerRequest extends Requestor {
 
     private ControllerRequest(String subcmd) {
         super(subcmd);
+        System.err.printf("DEBUG: ControllerRequest: %s:%d: %s\n",getHost(),getPort(),subcmd);
     }
 
     @Override

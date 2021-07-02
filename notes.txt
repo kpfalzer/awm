@@ -1,0 +1,27 @@
+%vmstat -sS M
+         3949 M total memory
+          401 M used memory
+          342 M active memory
+          285 M inactive memory
+         3132 M free memory
+            1 M buffer memory
+          414 M swap cache
+         3071 M total swap
+            0 M used swap
+         3071 M free swap
+         2456 non-nice user cpu ticks
+            0 nice user cpu ticks
+         2734 system cpu ticks
+       751067 idle cpu ticks
+          545 IO-wait cpu ticks
+            0 IRQ cpu ticks
+          252 softirq cpu ticks
+            0 stolen cpu ticks
+       407478 pages paged in
+        80729 pages paged out
+            0 pages swapped in
+            0 pages swapped out
+       239252 interrupts
+       255925 CPU context switches
+   1625265034 boot time
+         2367 forks

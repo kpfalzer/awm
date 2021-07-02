@@ -1,5 +1,7 @@
 #!/bin/bash
 
+cd $(dirname $0)
+
 export AWM_JOBID=666
 source etc/awm.sh
 awmStartDumpStats

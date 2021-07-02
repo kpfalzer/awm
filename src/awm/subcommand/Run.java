@@ -26,6 +26,7 @@ public class Run {
 
     private Run checkControllerResponse() {
         //todo: check __runParams;
+        System.err.printf("DEBUG: checkControllerResponse: node=%s\n",__cntlResponse.get("node"));
         addUserName(__cntlResponse);
         return this;
     }

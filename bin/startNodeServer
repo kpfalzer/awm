@@ -1,0 +1,6 @@
+#!/bin/csh -f
+
+set jar=${0:h}/awm.jar
+exec java -Xmx10M -ea -cp ${jar} \
+	-Dawm.controller.server.HOST=vm01 \
+	awm.node.Server ${*:q}

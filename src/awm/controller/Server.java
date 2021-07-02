@@ -44,4 +44,8 @@ public class Server {
     private final String __host;
     private final int __port;
     private MtHttpServer __server;
+
+    public static void main(String[] argv) {
+        Server.start();
+    }
 }

@@ -30,9 +30,10 @@ public class Run extends RequestHandler {
     private void respond() {
         JSONObject json = new JSONObject();
         json.put("jobid", 123)
-                .put("node", "localhost")
+                .put("node", "vm02")
                 .put("command", __request.get("command"))
         ;
+        System.err.println("DEBUG: cntl-server-response");
         try {
             sendJsonResponse(json.toString());
         } catch (IOException e) {

@@ -1,0 +1,4 @@
+#!/bin/csh -f
+
+set jar=${0:h}/awm.jar
+exec java -Xmx10M -ea -cp ${jar} awm.controller.Server ${*:q}

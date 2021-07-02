@@ -47,6 +47,7 @@ public class NodeRequest extends Requestor {
     protected void request(Map<String, Object> params, Consumer<String>[] readers) {
         invariant(2 == readers.length);
         try {
+            System.err.printf("DEBUG: NodeRequest.request: %s:%d\n",getHost(),getPort());
             HttpConnection.postJSON(getHost(), getPort(), _route, params, (http) -> {
                 try {
                     invariant(HTTP_OK == http.getResponseCode());
