@@ -25,3 +25,8 @@
        255925 CPU context switches
    1625265034 boot time
          2367 forks
+
+./startDbaseServer $HOME/dbase/awmDb x localhost 3308 /opt/javalibs/db-derby-10.14.2.0-lib/lib/derbyrun.jar
+i% java -jar ./db-derby-10.14.2.0-lib/lib/derbyrun.jar ij
+ij> connect 'jdbc:derby://localhost:3308/awmDb' user 'awmDbUser' password 'awmDbPasswd' ;
+

@@ -4,10 +4,12 @@
 # ./startDbaseServer $HOME/dbase/KwpDbase localhost 3002 /opt/javalibs/db-derby-10.14.2.0-lib/lib/derbyrun.jar
 
 set prog=${0:t}
-if ("4" != "$#argv") then
+if ("5" != "$#argv") then
 	cat <<L1
 
-Usage: ${prog} /dbdir/DbName host port /path/derbyrun.jar
+Usage: ${prog} /dbdir/DbName password host port /path/derbyrun.jar
+
+NOTE: password can be x, in which case the password is auto-generated (if needed).
 
 L1
 	exit 1
@@ -15,9 +17,10 @@ endif
 set dbPath=$1
 set dbName=${dbPath:t}
 set dbDir=${dbPath:h}
-set host=$2
-set port=$3
-set jar=$4
+set passwd=$2
+set host=$3
+set port=$4
+set jar=$5
 
 if ("derbyrun.jar" != "${jar:t}") then
 	echo "${jar}: is not path to derbyrun.jar"
@@ -65,7 +68,11 @@ echo "Create database ${dbPath} ..."
 set connect="'""jdbc:derby://localhost:${port}/${dbName};create=true""'"
 set dbUserx="'""derby.user.${dbName}User""'"
 set dbUser="'""${dbName}User""'"
-set dbPasswd="'""${dbName}Passwd""'"
+if ("x" == "${passwd}") then
+	set passwd=${dbName}Passwd
+	echo "dbase password: ${passwd}"
+endif
+set dbPasswd="'""${passwd}""'"
 
 cd $dbDir
 java -jar $jar ij <<L2
