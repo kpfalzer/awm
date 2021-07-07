@@ -1,0 +1,85 @@
+#!/bin/csh -f
+
+# On macos, need db to reside in user area (not /tmp/...):
+# ./startDbaseServer $HOME/dbase/KwpDbase localhost 3002 /opt/javalibs/db-derby-10.14.2.0-lib/lib/derbyrun.jar
+
+set prog=${0:t}
+if ("4" != "$#argv") then
+	cat <<L1
+
+Usage: ${prog} /dbdir/DbName host port /path/derbyrun.jar
+
+L1
+	exit 1
+endif
+set dbPath=$1
+set dbName=${dbPath:t}
+set dbDir=${dbPath:h}
+set host=$2
+set port=$3
+set jar=$4
+
+if ("derbyrun.jar" != "${jar:t}") then
+	echo "${jar}: is not path to derbyrun.jar"
+	exit 1
+endif
+
+# derbyrun.jar server start -h localhost -p 6819
+set rex="derbyrun.jar.+server.+start.+h.+${host}.+p.+${port}"
+ps auxww | fgrep -v egrep | egrep -iq ${rex}'$'
+if ("0" == "${status}") then
+	echo "Server already running:"
+	ps auxww | egrep -i ${rex}'$'
+	exit 0
+endif
+
+if (! -d ${dbDir}) then
+	mkdir -p ${dbDir}
+	if ($status) exit 1
+endif
+
+set dlog=${dbDir}/derby.log
+rm -f $dlog
+echo "Starting server: ${host}:${port} ..."
+java -Dderby.system.home=${dbDir} -Dderby.database.sqlAuthorization=true -jar $jar server start -h $host -p $port &
+sleep 5
+echo"";echo -n "Waiting for server ready "
+while (1)
+	echo -n "."
+	sleep 5
+	if (-e $dlog) then
+		fgrep -iq 'started and ready to accept' $dlog
+		if ("0" == "${status}") break
+	endif
+end
+echo ""
+
+set dir=${dbPath}
+if (-d ${dir}) then
+	echo "${dir}: database exists. All done"
+	exit 0
+endif
+
+echo "Create database ${dbPath} ..."
+
+set connect="'""jdbc:derby://localhost:${port}/${dbName};create=true""'"
+set dbUserx="'""derby.user.${dbName}User""'"
+set dbUser="'""${dbName}User""'"
+set dbPasswd="'""${dbName}Passwd""'"
+
+cd $dbDir
+java -jar $jar ij <<L2
+connect ${connect} ;
+CALL SYSCS_UTIL.SYSCS_SET_DATABASE_PROPERTY(
+    'derby.connection.requireAuthentication',
+    'true');
+CALL SYSCS_UTIL.SYSCS_SET_DATABASE_PROPERTY(
+    ${dbUserx}, ${dbPasswd});
+CALL SYSCS_UTIL.SYSCS_SET_DATABASE_PROPERTY(
+    'derby.database.fullAccessUsers', ${dbUser});
+create schema DEVELOPMENT AUTHORIZATION ${dbName}User;
+GRANT EXECUTE ON PROCEDURE SYSCS_UTIL.SYSCS_BACKUP_DATABASE to ${dbName}User ;
+exit;
+L2
+
+exit $status
