@@ -5,7 +5,9 @@
     <inspection_tool class="StaticImport" enabled="true" level="WARNING" enabled_by_default="true">
       <option name="allowedClasses">
         <set>
+          <option value="awm.Util" />
           <option value="gblibx.Util" />
+          <option value="java.util.Objects" />
         </set>
       </option>
     </inspection_tool>

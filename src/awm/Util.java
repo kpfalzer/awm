@@ -1,8 +1,15 @@
 package awm;
 
-import java.io.*;
+import java.io.BufferedReader;
+import java.io.File;
+import java.io.InputStream;
+import java.io.InputStreamReader;
+import java.io.OutputStream;
+import java.io.PrintStream;
 import java.util.Arrays;
+import java.util.HashSet;
 import java.util.Map;
+import java.util.Set;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
@@ -108,5 +115,39 @@ public class Util {
 
     public static PrintStream toPrintStream(OutputStream os) {
         return new PrintStream(os);
+    }
+
+    /**
+     * Check that has set includes at least reqd set.
+     *
+     * @param has  has set.
+     * @param reqd required set.
+     * @return set of missing reqd keys (or empty set if none missing).
+     */
+    public static <T> Set<T> hasRequired(Set<T> has, Set<T> reqd) {
+        return reqd.stream().filter(r -> {
+            return !has.contains(r);
+        }).collect(Collectors.toSet());
+    }
+
+    /**
+     * Check that has covered by expected.
+     *
+     * @param has      has set.
+     * @param expected superset of expected keys.
+     * @return has keys not in any of expected.
+     */
+    public static <T> Set<T> notInAny(Set<T> has, Set<T>... expected) {
+        Set<T> merged = new HashSet<>();
+        for (Set<T> s : expected) merged.addAll(s);
+        return has.stream().filter((h -> {
+            return !merged.contains(h);
+        })).collect(Collectors.toSet());
+    }
+
+    public static String getStackTrace(Exception e, String sep) {
+        return Arrays.asList(e.getStackTrace()).stream()
+                .map(s -> s.toString())
+                .collect(Collectors.joining(sep));
     }
 }

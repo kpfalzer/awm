@@ -11,12 +11,12 @@ import static awm.Util.throwException;
  * Central controller for AWM.
  */
 public class Server {
-    public static void start(String host, int port) {
-        final Server server = new Server(host, port);
+    public static Server start(String host, int port) {
+        return new Server(host, port);
     }
 
-    public static void start() {
-        start(Config.HOST, Config.PORT);
+    public static Server start() {
+        return start(Config.HOST, Config.PORT);
     }
 
     public Server(String host, int port) {
