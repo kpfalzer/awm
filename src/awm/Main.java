@@ -2,6 +2,8 @@ package awm;
 
 import awm.subcommand.Run;
 
+import java.util.Arrays;
+
 import static gblibx.Util.invariant;
 import static java.util.Objects.isNull;
 
@@ -21,9 +23,11 @@ public class Main {
 
     private void process() {
         if (0 == __argv.length) usageError();
+        //drop subcommand
+        final String[] args = Arrays.copyOfRange(__argv, 1, __argv.length);
         switch (__argv[0]) {
             case "run":
-                Run.execute(__argv);
+                Run.execute(args);
                 break;
             default:
                 invariant(false);

@@ -8,6 +8,8 @@ public class Job {
         USER_SID("? INT REFERENCES SYMBOLS (ID)"),
         HOST_SID("? INT REFERENCES SYMBOLS (ID)"),
         COMMAND(Database.getMaxVarCharColSpec()),
+        MEM_KB("? INT NOT NULL"),
+        NCORE("? INT NOT NULL"),
         CREATED_AT("? TIMESTAMP NOT NULL");
 
         EJob(String spec) {

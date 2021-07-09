@@ -64,7 +64,7 @@ public class Main {
         Sideband sb = new Sideband();
         __options = new Parser("awmController", "Start AWM controller.");
         __options.add(new Option(
-                "-v|--" + __VERBOSITY_OPT, "D|I|W|E", "D",
+                'v', __VERBOSITY_OPT, "D|I|W|E", "D",
                 String.format("Log verbosity (one of: %s)", sb.VALID_VERBOSITY_OPT),
                 '?', (_arg) -> {
             final String arg = _arg.toString();
@@ -75,10 +75,10 @@ public class Main {
             return new Util.Pair<>(arg, null);
         }))
                 .add(new Option(
-                        "-l|--" + __LOGFILE_OPT, "logfile", Config.LOG.getAbsolutePath(),
-                        "Logfile for controller messages", '?'
+                        'l', __LOGFILE_OPT, null, Config.LOG.getAbsolutePath(),
+                        "Logfile for controller messages", '?', null
                 ))
-                .add(new Option("-c|--" + __CONSOLE_OPT, "Log to console (too)"));
+                .add(new Option('c', __CONSOLE_OPT, "Log to console (too)"));
         return this;
     }
 
@@ -92,6 +92,7 @@ public class Main {
         logger.setLevel(getOption(__VERBOSITY_OPT).getOptAsString().charAt(0));
         logger.addNamedLogger(__HTTP_LOGGER, Message.getLogRecordMessage());
         __logger = new Message.Logger(logger);
+        __logger.info("LOG-2", f);
         return this;
     }
 

@@ -8,8 +8,6 @@ import jmvc.model.sql.SqlTable;
 
 import static awm.controller.model.Symbol.ESymbol;
 import static awm.controller.model.Job.EJob;
-import static awm.controller.model.MemReq.EMemReq;
-import static awm.controller.model.NCoreReq.ENCoreReq;
 import static awm.controller.model.LicenseReq.ELicenseReq;
 import static gblibx.Util.downcast;
 import static gblibx.Util.invariant;
@@ -50,14 +48,6 @@ public class Database {
 
     public static Table<EJob> Jobs() {
         return __theOne.__jobs;
-    }
-
-    public static Table<EMemReq> MemReqs() {
-        return __theOne.__memReqs;
-    }
-
-    public static Table<ENCoreReq> NCoreReqs() {
-        return __theOne.__ncoreReqs;
     }
 
     public static Table<ELicenseReq> LicenseReqs() {
@@ -110,18 +100,6 @@ public class Database {
                 EJob.class
         );
         //refences to Jobs.id
-        __memReqs = SqlTable.create(
-                __dbase,
-                "memReqs",
-                EMemReq.class
-        );
-        //refences to Jobs.id
-        __ncoreReqs = SqlTable.create(
-                __dbase,
-                "ncoreReqs",
-                ENCoreReq.class
-        );
-        //refences to Jobs.id
         __licenseReqs = SqlTable.create(
                 __dbase,
                 "licenseReqs",
@@ -133,7 +111,5 @@ public class Database {
     private SqlDatabase __dbase;
     private Table<ESymbol> __symbols;
     private Table<EJob> __jobs;
-    private Table<EMemReq> __memReqs;
-    private Table<ENCoreReq> __ncoreReqs;
     private Table<ELicenseReq> __licenseReqs;
 }

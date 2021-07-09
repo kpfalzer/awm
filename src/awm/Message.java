@@ -45,6 +45,7 @@ public class Message {
                 "DIR-2", "%s: could not create directory",
                 "EXCEPTION-1", "%s%s",
                 "LOG-1", "%s: could not create log (details: %s)",
+                "LOG-2", "%s: starting new logfile",
                 "LOGGER-1", "%s:%s#%s: %s",
                 "REQ-1", "Request error: %s",
                 "REQ-2", "Request from: %s: %s",

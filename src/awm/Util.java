@@ -10,6 +10,7 @@ import java.util.Arrays;
 import java.util.HashSet;
 import java.util.Map;
 import java.util.Set;
+import java.util.function.Function;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
@@ -109,6 +110,11 @@ public class Util {
         return kvs;
     }
 
+    public static Map<String, Object> addHostName(Map<String, Object> kvs) {
+        kvs.put("host", hostname());
+        return kvs;
+    }
+
     public static BufferedReader toBufferedReader(InputStream ins) {
         return new BufferedReader(new InputStreamReader(ins));
     }
@@ -149,5 +155,13 @@ public class Util {
         return Arrays.asList(e.getStackTrace()).stream()
                 .map(s -> s.toString())
                 .collect(Collectors.joining(sep));
+    }
+
+    public static <T> T convert(Object s, Function<Object, T> conv) {
+        try {
+            return conv.apply(s);
+        } catch (Exception e) {
+            return null;
+        }
     }
 }

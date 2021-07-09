@@ -1,6 +1,9 @@
 package awm.controller.model;
 
+import gblibx.Util;
 import jmvc.model.Table;
+
+import java.util.Map;
 
 public class LicenseReq {
     enum ELicenseReq implements Table.ColSpec {
@@ -18,6 +21,16 @@ public class LicenseReq {
         @Override
         public String getSpec() {
             return _spec;
+        }
+    }
+
+    public static class Spec extends Util.Pair<String, Integer> {
+        public Spec(String lic, Integer cnt) {
+            super(lic, cnt);
+        }
+
+        public Map<String,Object> toMap() {
+            return Util.toMap("license", v1, "count", v2);
         }
     }
 }
