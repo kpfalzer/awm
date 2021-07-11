@@ -5,6 +5,9 @@ import jmvc.model.Table;
 
 import java.util.Map;
 
+import static gblibx.Util.castobj;
+import static java.util.Objects.isNull;
+
 public class LicenseReq {
     enum ELicenseReq implements Table.ColSpec {
         ID("? INT NOT NULL GENERATED ALWAYS AS IDENTITY; PRIMARY KEY (?)"),
@@ -29,8 +32,18 @@ public class LicenseReq {
             super(lic, cnt);
         }
 
-        public Map<String,Object> toMap() {
+        public Map<String, Object> toMap() {
             return Util.toMap("license", v1, "count", v2);
+        }
+
+        public static Spec[] create(Object[] ary) {
+            if (isNull(ary)) return null;
+            Spec[] specs = new Spec[ary.length];
+            for (int i = 0; i < ary.length; i++) {
+                Map<String, Object> e = castobj(ary[i]);
+                specs[i] = new Spec(castobj(e.get("license")), castobj(e.get("count")));
+            }
+            return specs;
         }
     }
 }

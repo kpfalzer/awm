@@ -25,6 +25,16 @@ class RunTest {
             assertNotNull(opts);
             json = opts.toString();
         }
+        {
+            final Run.Options opts = Run.checkArguments("-p", "100");
+            assertNull(opts);
+            //json = opts.toString();
+        }
+        {
+            final Run.Options opts = Run.checkArguments("-p", "-666");
+            assertNull(opts);
+            //json = opts.toString();
+        }
         boolean stop = true;
     }
 }

@@ -16,6 +16,7 @@ import java.util.stream.Stream;
 
 import static gblibx.RunCmd.runCommandStdout;
 import static gblibx.Util.invariant;
+import static gblibx.Util.isNonNull;
 
 public class Util {
     public static String hostname() {
@@ -98,6 +99,13 @@ public class Util {
 
     public static void fatal(Exception e) {
         e.printStackTrace(System.err);
+        System.exit(1);
+    }
+
+    public static void usageError(Class clz, Exception ex) {
+        System.err.printf("FATAL: %s", clz.getName());
+        if (isNonNull(ex))
+            System.err.printf(": %s\n", Message.get("USAGE-1", ex.getMessage()));
         System.exit(1);
     }
 

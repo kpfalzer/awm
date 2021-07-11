@@ -64,6 +64,10 @@ public abstract class RequestHandler extends jmvc.server.RequestHandler {
         return error("%s request params: %s", type, join(bad, ","));
     }
 
+    protected <T> T get(String k) {
+        return castobj(_request.get(k));
+    }
+
     protected abstract RequestHandler respond() throws IOException;
 
     protected RequestHandler checkParams() throws IOException {

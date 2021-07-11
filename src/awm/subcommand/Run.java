@@ -87,6 +87,8 @@ public class Run {
                 () -> Integer.valueOf(AwmProps.getProperty("awm.subcommand.run.MEM", "1024")));
         __NCORE = supplyIfNull(__NCORE,
                 () -> Integer.valueOf(AwmProps.getProperty("awm.subcommand.run.NCORE", "1")));
+        __PRIORITY = supplyIfNull(__PRIORITY,
+                () -> Integer.valueOf(AwmProps.getProperty("awm.subcommand.run.PRIORITY", "0")));
         final Parser parser = new Parser("awm-run", "Run command using AWM");
         {
             Group reqd = new Group("Requirements", new Option[]{
@@ -119,8 +121,16 @@ public class Run {
                             (arg) -> {
                                 Object ncore = null;
                                 Integer v = convert(arg, (s) -> Integer.parseInt(castobj(s)));
-                                if (isNonNull(v) && (0 <= v)) ncore = 0;
+                                if (isNonNull(v) && (0 <= v)) ncore = v;
                                 return new Util.Pair(ncore, (isNull(ncore)) ? arg : null);
+                            }),
+                    new Option('p', "priority", null, __PRIORITY,
+                            "job priority", '?',
+                            (arg) -> {
+                                Object priority = null;
+                                Integer v = convert(arg, (s) -> Integer.parseInt(castobj(s)));
+                                if (isNonNull(v)) priority = v;
+                                return new Util.Pair(priority, (isNull(priority)) ? arg : null);
                             }),
                     new Option('l', "license", null, null,
                             "license requirement (e.g. 'lic1/n')", '*',
@@ -148,22 +158,17 @@ public class Run {
         error(exitOnErr, null);
     }
 
-    private static Options __checkArguments(String[] args) {
-        return __checkArguments(true, args);
-    }
-
     private static Options __checkArguments(boolean exitOnErr, String[] args) {
-        try {
-            final Parser parser = setupOptions();
-            boolean ok = parser.parse(args);
-            if (!ok) error(exitOnErr);
-            if (!parser.hasPosArgs()) {
-                error(exitOnErr, "missing 'command [arg]...'");
-            }
-            if (ok) return new Options(parser);
-        } catch (Exception e) {
-            error(exitOnErr, e.getMessage());
+        final Parser parser = setupOptions();
+        boolean ok = parser.parse(args, (ex) -> {
+            error(exitOnErr, ex.getMessage());
+        });
+        if (!ok) error(exitOnErr);
+        if (!parser.hasPosArgs()) {
+            error(exitOnErr, "missing 'command [arg]...'");
+            ok = false;
         }
+        if (ok) return new Options(parser);
         return null;
     }
 
@@ -180,12 +185,15 @@ public class Run {
             this.opts = xopts;
             memKB = opts.getValue("mem").getOptAsInteger();
             ncore = opts.getValue("ncore").getOptAsInteger();
+            priority = opts.getValue("priority").getOptAsInteger();
             licenses = opts.ifhasOption("license", (opt) -> opt.getOptsAsT());
         }
 
         private Map<String, Object> toMap() {
             Map<String, Object> map = Util.toMap(
-                    "mem", memKB, "ncore", ncore, "command", join(opts.getPosArgs()));
+                    "mem", memKB, "ncore", ncore,
+                    "priority", priority,
+                    "command", join(opts.getPosArgs()));
             map = addHostName(addUserName(map));
             if (isNonNull(licenses))
                 map.put("license", Arrays.stream(licenses)
@@ -198,11 +206,9 @@ public class Run {
         }
 
         final Parser opts;
-        final int memKB;
-        final int ncore;
+        final int memKB, ncore, priority;
         final LicenseReq.Spec[] licenses;
     }
 
-    private static Integer __MEM = null;
-    private static Integer __NCORE = null;
+    private static Integer __MEM = null, __NCORE = null, __PRIORITY = null;
 }

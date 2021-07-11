@@ -9,7 +9,7 @@ import gblibx.yaap.Parser;
 import java.io.File;
 import java.util.List;
 
-import static awm.Util.fatal;
+import static awm.Util.usageError;
 import static gblibx.Util.invariant;
 import static gblibx.Util.isNonNull;
 import static gblibx.Util.join;
@@ -24,7 +24,7 @@ public class Main {
         try {
             new Main(argv).initialize();
         } catch (Util.FileException e) {
-            fatal(e);
+            awm.Util.fatal(e);
         }
     }
 
@@ -101,8 +101,10 @@ public class Main {
     }
 
     private Main checkOptions() {
-        if (!__options.parse(__args, false)) {
-            System.exit(1);
+        if (!__options.parse(__args, false, (ex) -> {
+            usageError(this.getClass(), ex);
+        })) {
+            usageError(this.getClass(), null);
         }
         String verbosity = __options.getValue("verbosity").asScalar();
         return this;

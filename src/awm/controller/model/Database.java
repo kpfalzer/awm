@@ -32,18 +32,6 @@ public class Database {
      * Helper for dealing with symbols.
      */
     public static class Symbols {
-        public static int getId(Object value, Symbol.EType type) {
-            return Symbol.findOrInsert(Symbols(), value, type);
-        }
-        public static int getUser(String user) {
-            return getId(user, Symbol.EType.USER);
-        }
-        public static int getHost(String host) {
-            return getId(host, Symbol.EType.HOST);
-        }
-        public static int getLicense(String license) {
-            return getId(license, Symbol.EType.LICENSE);
-        }
     }
 
     public static Table<EJob> Jobs() {

@@ -49,7 +49,8 @@ public class Message {
                 "LOGGER-1", "%s:%s#%s: %s",
                 "REQ-1", "Request error: %s",
                 "REQ-2", "Request from: %s: %s",
-                "SERVER-1", "start server: %s:%d"
+                "SERVER-1", "start server: %s:%d",
+                "USAGE-1", "%s"
         );
     }
 
