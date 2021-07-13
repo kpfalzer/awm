@@ -4,13 +4,13 @@ import awm.Message;
 import awm.RequestHandler;
 import awm.controller.Main;
 import awm.controller.PendingJob;
+import awm.controller.model.Job;
 import awm.controller.model.LicenseReq;
-import org.json.JSONObject;
 
 import java.io.IOException;
 import java.util.Set;
 
-import static awm.Util.throwException;
+import static gblibx.Util.invariant;
 import static gblibx.Util.supplyIfNull;
 import static gblibx.Util.toSet;
 
@@ -28,6 +28,20 @@ public class Run {
 
     private Run submit() {
         //todo: add to dbase, queue...
+        return addToDbase()
+                .addToQueue();
+    }
+
+    private Run addToDbase() {
+        int jobId = Job.create(__job);
+        invariant(0 < jobId);//todo
+        __job.jobId = jobId;
+        return this;
+    }
+
+    private Run addToQueue() {
+        final int n = Main.addJob(__job);
+        Main.logger().debug("QUEUE-1", __job.toString(), n);
         return this;
     }
 
@@ -62,24 +76,6 @@ public class Run {
                     get("priority"),
                     LicenseReq.Spec.create(get("license"))
             );
-        }
-
-        /**
-         * Return JSON packet with parameters: status, jobid, node, command.
-         * status == "0" on success; else error details (as status value).
-         */
-        void xrespond() {
-            JSONObject json = new JSONObject();
-            json.put("jobid", 123)
-                    .put("node", "vm02")
-                    .put("command", _request.get("command"))
-            ;
-            System.err.println("DEBUG: cntl-server-response");
-            try {
-                sendJsonResponse(json.toString());
-            } catch (IOException e) {
-                throwException(e);
-            }
         }
 
         @Override

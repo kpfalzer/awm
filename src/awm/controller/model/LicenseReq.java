@@ -28,6 +28,14 @@ public class LicenseReq {
     }
 
     public static class Spec extends Util.Pair<String, Integer> {
+        public String name() {
+            return super.v1;
+        }
+
+        public int count() {
+            return super.v2;
+        }
+
         public Spec(String lic, Integer cnt) {
             super(lic, cnt);
         }

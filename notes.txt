@@ -1,3 +1,8 @@
+%free -h
+total          used        free      shared  buff/cache   available
+Mem:           3.9G        937M        2.1G         88M        873M        2.6G
+Swap:          3.0G          0B        3.0G
+
 %vmstat -sS M
          3949 M total memory
           401 M used memory
@@ -26,7 +31,7 @@
    1625265034 boot time
          2367 forks
 
-./startDbaseServer $HOME/dbase/awmDb x localhost 3308 /opt/javalibs/db-derby-10.14.2.0-lib/lib/derbyrun.jar
+./bin/startDbaseServer $HOME/dbase/awmDb x localhost 3308 /opt/javalibs/db-derby-10.14.2.0-lib/lib/derbyrun.jar
 i% java -jar ./db-derby-10.14.2.0-lib/lib/derbyrun.jar ij
 ij> connect 'jdbc:derby://localhost:3308/awmDb' user 'awmDbUser' password 'awmDbPasswd' ;
 

@@ -20,6 +20,10 @@ import static java.util.Objects.isNull;
  * Main for controller.
  */
 public class Main {
+    public static int addJob(PendingJob pj) {
+        return theOne().__pendingJobs.insert(pj).size();
+    }
+
     public static void main(String[] argv) {
         try {
             new Main(argv).initialize();
@@ -123,6 +127,7 @@ public class Main {
     private Parser __options;
     private Message.Logger __logger;
     private Server __server;
+    private PendingQueue __pendingJobs = new PendingQueue();
 
     private static final String __HTTP_LOGGER = "com.sun.net.httpserver";
 }

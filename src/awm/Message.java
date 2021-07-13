@@ -47,6 +47,7 @@ public class Message {
                 "LOG-1", "%s: could not create log (details: %s)",
                 "LOG-2", "%s: starting new logfile",
                 "LOGGER-1", "%s:%s#%s: %s",
+                "QUEUE-1", "Added job: %s: %d on queue",
                 "REQ-1", "Request error: %s",
                 "REQ-2", "Request from: %s: %s",
                 "SERVER-1", "start server: %s:%d",
