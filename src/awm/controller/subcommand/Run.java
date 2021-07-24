@@ -16,9 +16,6 @@ import static gblibx.Util.toSet;
 
 /**
  * Run request.
- * Required parameters: user, command, host.
- * Optional parameters: mem, ncore, license.
- * <p>
  * Example: curl --header "Content-Type: application/json" --request POST --data '{"user":"kpfalzer","host":"vm01","command":"hostname"}' http://localhost:6817/subcmd/run
  */
 public class Run {
@@ -63,7 +60,7 @@ public class Run {
 
     private static final Set<String> __REQUIRED_PARMS =
             toSet("user", "command", "host", "mem", "ncore", "priority");
-    private static final Set<String> __OPTIONAL_PARMS = toSet("license");
+    private static final Set<String> __OPTIONAL_PARMS = toSet("license", "jobName");
 
     private static class Handler extends RequestHandler {
         public PendingJob toJob() {
@@ -71,6 +68,7 @@ public class Run {
                     get("user"),
                     get("host"),
                     get("command"),
+                    get("jobName"),
                     get("mem"),
                     get("ncore"),
                     get("priority"),
@@ -82,6 +80,14 @@ public class Run {
         protected RequestHandler respond() throws IOException {
             //TODO: add job to dbase, queue, ...
             final Run run = new Run(toJob()).submit();
+            {
+                //fake latency to respond
+                if (true) try {
+                    Thread.sleep(1000/*ms/s*/ * 60/*s/min*/ * 1/*min*/);
+                } catch (InterruptedException e) {
+                    invariant(false);
+                }
+            }
             //todo...
             sendResponse(
                     "status", "0",

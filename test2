@@ -1,0 +1,9 @@
+#!/bin/csh -f
+
+set i=0
+set n=100
+while ($n > $i)
+	#echo $i
+	java -cp out/artifacts/awm_jar/awm.jar -ea -Dawm.controller.server.HOST=localhost awm.Main run -j job${i} -m "${i}M" hostname &
+	@ i++
+end

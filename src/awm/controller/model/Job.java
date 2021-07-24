@@ -18,12 +18,13 @@ public class Job {
         int jobId = -1;
         jobId = Jobs().insertRow(
                 USER_SID, getUser(pj.user),
-                HOST_SID,getHost(pj.host),
-                COMMAND,pj.command,
-                MEM_KB,pj.memKB,
-                NCORE,pj.ncore,
-                PRIORITY,pj.priority,
-                CREATED_AT,pj.createdAt
+                HOST_SID, getHost(pj.host),
+                COMMAND, pj.command,
+                JOB_NAME, pj.jobName,
+                MEM_KB, pj.memKB,
+                NCORE, pj.ncore,
+                PRIORITY, pj.priority,
+                CREATED_AT, pj.createdAt
         );
         if (0 < jobId && isNonNull(pj.license)) {
             for (LicenseReq.Spec lic : pj.license) {
@@ -32,7 +33,7 @@ public class Job {
                         LICENSE_SID, getLicense(lic.name()),
                         COUNT, lic.count()
                 );
-                    invariant(0 <= id);
+                invariant(0 <= id);
             }
         }
         return jobId;
@@ -43,6 +44,7 @@ public class Job {
         USER_SID("? INT REFERENCES SYMBOLS (ID)"),
         HOST_SID("? INT REFERENCES SYMBOLS (ID)"),
         COMMAND(Database.getMaxVarCharColSpec()),
+        JOB_NAME("? VARCHAR(256) DEFAULT NULL"),
         MEM_KB("? INT NOT NULL"),
         NCORE("? INT NOT NULL"),
         PRIORITY("? INT NOT NULL"),

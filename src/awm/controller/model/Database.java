@@ -85,13 +85,17 @@ public class Database {
         __jobs = SqlTable.create(
                 __dbase,
                 "jobs",
-                EJob.class
+                EJob.class,
+                //additional indexes:
+                EJob.USER_SID, EJob.JOB_NAME
         );
         //refences to Jobs.id
         __licenseReqs = SqlTable.create(
                 __dbase,
                 "licenseReqs",
-                ELicenseReq.class
+                ELicenseReq.class,
+                //additional indexes:
+                ELicenseReq.LICENSE_SID
         );
         return this;
     }

@@ -56,8 +56,10 @@ public class Run {
     private Run nodeRequest() {
         //todo: perhaps add in mem, timeout, ...
         //NOTE: mem could be ulimit?
-        final String toHost = castobj(__cntlResponse.get("node"));
-        NodeRequest.request(CMD, toHost, __cntlResponse, __READERS);
+        if (false) {//TODO: debug-short-circuit
+            final String toHost = castobj(__cntlResponse.get("node"));
+            NodeRequest.request(CMD, toHost, __cntlResponse, __READERS);
+        }
         return this;
     }
 
@@ -91,7 +93,7 @@ public class Run {
                 () -> Integer.valueOf(AwmProps.getProperty("awm.subcommand.run.PRIORITY", "0")));
         final Parser parser = new Parser("awm-run", "Run command using AWM");
         {
-            Group reqd = new Group("Requirements", new Option[]{
+            final Group reqd = new Group("Required options", new Option[]{
                     new Option('m', "mem", null, __MEM,
                             "(min) required memory: K|M|G (e.g. '10M')", '?',
                             (arg) -> {
@@ -146,6 +148,13 @@ public class Run {
             });
             parser.add(reqd);
         }
+        {
+            final Group opt = new Group("Optional options", new Option[]{
+                    new Option('j', "jobName", null, null,
+                            "job name", '?', null)
+            });
+            parser.add(opt);
+        }
         return parser.addPosArgUsage("command [arg]...", "Command (and optional arg) to run");
     }
 
@@ -187,6 +196,7 @@ public class Run {
             ncore = opts.getValue("ncore").getOptAsInteger();
             priority = opts.getValue("priority").getOptAsInteger();
             licenses = opts.ifhasOption("license", (opt) -> opt.getOptsAsT());
+            jobName = opts.ifhasOption("jobName", (opt) -> opt.getOptAsString());
         }
 
         private Map<String, Object> toMap() {
@@ -195,9 +205,13 @@ public class Run {
                     "priority", priority,
                     "command", join(opts.getPosArgs()));
             map = addHostName(addUserName(map));
-            if (isNonNull(licenses))
+            if (isNonNull(licenses)) {
                 map.put("license", Arrays.stream(licenses)
                         .map(l -> l.toMap()).toArray());
+            }
+            if (isNonNull(jobName)) {
+                map.put("jobName", jobName);
+            }
             return map;
         }
 
@@ -207,6 +221,7 @@ public class Run {
 
         final Parser opts;
         final int memKB, ncore, priority;
+        final String jobName;
         final LicenseReq.Spec[] licenses;
     }
 

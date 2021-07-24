@@ -53,5 +53,9 @@ public class LicenseReq {
             }
             return specs;
         }
+
+        public String toString() {
+            return String.format("%s:%d", super.v1,super.v2);
+        }
     }
 }
