@@ -19,10 +19,10 @@ import static java.net.HttpURLConnection.HTTP_OK;
  * Handle run by sending back stdout/err onto body (line-by-line).
  * stderr will prefix line with ERROR.
  */
+//TODO: refactor to use awm.RequestHandler (for logging...)
 public class Run extends RequestHandler {
     @Override
     public void handle(HttpExchange httpExchange) throws IOException {
-        System.err.println("DEBUG: Run.handle starts");
         initialize(httpExchange);
         invariant(isPOST());//todo
         __params = castobj(bodyAsObj());
@@ -43,7 +43,6 @@ public class Run extends RequestHandler {
 
     private Run execute() {
         final NodeRun nrun = new NodeRun();
-        System.err.println("DEBUG: Run.execute run...");
         nrun.run();
         _exchange.close();
         __exitVal = new Pair<>(nrun.isNormalExit(), nrun.getExitValue());

@@ -32,7 +32,7 @@ public class Run {
     private Run addToDbase() {
         int jobId = Job.create(__job);
         invariant(0 < jobId);//todo
-        __job.jobId = jobId;
+        __job.setJobId(jobId);
         return this;
     }
 

@@ -2,8 +2,8 @@ package awm.controller;
 
 import java.util.HashMap;
 
-public class RunningQueue extends HashMap<Long, RunningJob> {
-    public RunningQueue addJob(RunningJob job) {
+public class RunningJobs extends HashMap<Long, RunningJob> {
+    public RunningJobs addJob(RunningJob job) {
         super.put(job.getJobId(), job);
         return this;
     }
