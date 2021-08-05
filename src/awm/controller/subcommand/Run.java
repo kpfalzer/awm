@@ -1,6 +1,6 @@
 package awm.controller.subcommand;
 
-import awm.Message;
+import awm.Logger;
 import awm.RequestHandler;
 import awm.controller.Main;
 import awm.controller.PendingJob;
@@ -109,7 +109,7 @@ public class Run {
         }
 
         @Override
-        protected Message.Logger logger() {
+        protected Logger logger() {
             return Main.logger();
         }
     }

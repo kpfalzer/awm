@@ -34,7 +34,7 @@ public abstract class RequestHandler extends jmvc.server.RequestHandler {
         }
     }
 
-    protected abstract Message.Logger logger();
+    protected abstract Logger logger();
 
     protected Map<String, Object> _request = null;
     protected StringBuilder _errorMsg = null;

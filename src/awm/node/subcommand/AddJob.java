@@ -1,6 +1,6 @@
 package awm.node.subcommand;
 
-import awm.Message;
+import awm.Logger;
 import awm.node.Main;
 import com.sun.net.httpserver.HttpExchange;
 import awm.RequestHandler;
@@ -15,7 +15,7 @@ public class AddJob extends RequestHandler {
     }
 
     @Override
-    protected Message.Logger logger() {
+    protected Logger logger() {
         return Main.logger();
     }
 

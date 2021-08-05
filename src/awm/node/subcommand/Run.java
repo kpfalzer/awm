@@ -1,14 +1,18 @@
 package awm.node.subcommand;
 
+import awm.Logger;
+import awm.RequestHandler;
+import awm.node.Main;
 import com.sun.net.httpserver.Headers;
 import com.sun.net.httpserver.HttpExchange;
 import gblibx.RunCmd;
-import jmvc.server.RequestHandler;
+import sun.reflect.generics.reflectiveObjects.NotImplementedException;
 
 import java.io.IOException;
 import java.io.PrintStream;
 import java.util.List;
 import java.util.Map;
+import java.util.Set;
 
 import static awm.Util.splitArgs;
 import static awm.Util.toPrintStream;
@@ -19,8 +23,8 @@ import static java.net.HttpURLConnection.HTTP_OK;
  * Handle run by sending back stdout/err onto body (line-by-line).
  * stderr will prefix line with ERROR.
  */
-//TODO: refactor to use awm.RequestHandler (for logging...)
 public class Run extends RequestHandler {
+    //todo: added awm.RequestHandler: need to check method overrides.
     @Override
     public void handle(HttpExchange httpExchange) throws IOException {
         initialize(httpExchange);
@@ -28,6 +32,23 @@ public class Run extends RequestHandler {
         __params = castobj(bodyAsObj());
         responseHeader().execute();
         //todo: upload result to server
+    }
+
+    @Override
+    protected Logger logger() {
+        return Main.logger();
+    }
+
+    @Override
+    protected RequestHandler respond() throws IOException {
+        throw new NotImplementedException();
+        //todo: return null;
+    }
+
+    @Override
+    protected Set<String> getRequiredParams() {
+        throw new NotImplementedException();
+        //todo: return null;
     }
 
     private Run responseHeader() throws IOException {

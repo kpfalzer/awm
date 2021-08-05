@@ -1,6 +1,7 @@
 package awm.node;
 
 import awm.Logger;
+import gblibx.Util;
 
 import static gblibx.Util.invariant;
 import static java.util.Objects.isNull;
@@ -15,12 +16,12 @@ public class Main {
         __theOne = this;
     }
 
-    private Main initialize() {
+    private Main initialize() throws Util.FileException {
         //todo: add more
         return setLogger();
     }
 
-    private Main setLogger() {
+    private Main setLogger() throws Util.FileException {
         __logger = new Logger(Config.LOG, __logToConsole);
         return this;
     }

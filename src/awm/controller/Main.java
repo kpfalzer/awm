@@ -1,5 +1,6 @@
 package awm.controller;
 
+import awm.Logger;
 import awm.Message;
 import gblibx.GbLogger;
 import gblibx.Util;
@@ -95,7 +96,7 @@ public class Main {
         GbLogger logger = new GbLogger(f, getOption(__CONSOLE_OPT).isTrue(), true);
         logger.setLevel(getOption(__VERBOSITY_OPT).getOptAsString().charAt(0));
         logger.addNamedLogger(__HTTP_LOGGER, Message.getLogRecordMessage());
-        __logger = new Message.Logger(logger);
+        __logger = new Logger(logger);
         __logger.info("LOG-2", f);
         return this;
     }
@@ -120,12 +121,12 @@ public class Main {
         return __theOne;
     }
 
-    static public Message.Logger logger() {
+    static public Logger logger() {
         return theOne().__logger;
     }
 
     private Parser __options;
-    private Message.Logger __logger;
+    private Logger __logger;
     private Server __server;
     private PendingQueue __pendingJobs = new PendingQueue();
 

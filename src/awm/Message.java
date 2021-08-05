@@ -1,13 +1,10 @@
 package awm;
 
-import gblibx.GbLogger;
-
 import java.util.HashMap;
 import java.util.Map;
 import java.util.function.Function;
 import java.util.logging.LogRecord;
 
-import static awm.Util.getStackTrace;
 import static gblibx.Util.invariant;
 import static gblibx.Util.isEven;
 
@@ -55,71 +52,4 @@ public class Message {
         );
     }
 
-    public static class Logger {
-        public Logger(GbLogger logger) {
-            __logger = logger;
-        }
-
-        public Logger debug(String message) {
-            __logger.debug(message);
-            return this;
-        }
-
-        public Logger debug(String key, Object... args) {
-            return debug(get(key, args));
-        }
-
-        public Logger info(String message) {
-            __logger.info(message);
-            return this;
-        }
-
-        public Logger info(String key, Object... args) {
-            return info(get(key, args));
-        }
-
-        public Logger warning(String message) {
-            __logger.warning(message);
-            return this;
-        }
-
-        public Logger warning(String key, Object... args) {
-            return warning(get(key, args));
-        }
-
-        public Logger error(String message) {
-            __logger.error(message);
-            return this;
-        }
-
-        public Logger error(String key, Object... args) {
-            return error(get(key, args));
-        }
-
-        private static final String __X1 = "\n    ";
-
-        public Logger error(Exception e) {
-            return error("EXCEPTION-1", e.getMessage(), __X1 + getStackTrace(e, __X1));
-        }
-
-        public Logger fatal(String message) {
-            __logger.fatal(message);
-            return this;
-        }
-
-        public Logger fatal(String key, Object... args) {
-            return fatal(get(key, args));
-        }
-
-        public Logger message(String message) {
-            __logger.message(message);
-            return this;
-        }
-
-        public Logger message(String key, Object... args) {
-            return message(get(key, args));
-        }
-
-        private final GbLogger __logger;
-    }
 }
