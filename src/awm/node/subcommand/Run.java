@@ -4,19 +4,18 @@ import awm.Logger;
 import awm.RequestHandler;
 import awm.node.Main;
 import com.sun.net.httpserver.Headers;
-import com.sun.net.httpserver.HttpExchange;
 import gblibx.RunCmd;
-import sun.reflect.generics.reflectiveObjects.NotImplementedException;
 
 import java.io.IOException;
 import java.io.PrintStream;
 import java.util.List;
-import java.util.Map;
 import java.util.Set;
 
 import static awm.Util.splitArgs;
 import static awm.Util.toPrintStream;
-import static gblibx.Util.*;
+import static gblibx.Util.Pair;
+import static gblibx.Util.toList;
+import static gblibx.Util.toSet;
 import static java.net.HttpURLConnection.HTTP_OK;
 
 /**
@@ -24,16 +23,6 @@ import static java.net.HttpURLConnection.HTTP_OK;
  * stderr will prefix line with ERROR.
  */
 public class Run extends RequestHandler {
-    //todo: added awm.RequestHandler: need to check method overrides.
-    @Override
-    public void handle(HttpExchange httpExchange) throws IOException {
-        initialize(httpExchange);
-        invariant(isPOST());//todo
-        __params = castobj(bodyAsObj());
-        responseHeader().execute();
-        //todo: upload result to server
-    }
-
     @Override
     protected Logger logger() {
         return Main.logger();
@@ -41,14 +30,12 @@ public class Run extends RequestHandler {
 
     @Override
     protected RequestHandler respond() throws IOException {
-        throw new NotImplementedException();
-        //todo: return null;
+        return responseHeader().execute();
     }
 
     @Override
     protected Set<String> getRequiredParams() {
-        throw new NotImplementedException();
-        //todo: return null;
+        return __REQD_PARAMS;
     }
 
     private Run responseHeader() throws IOException {
@@ -58,21 +45,23 @@ public class Run extends RequestHandler {
         return this;
     }
 
-    private Map<String, String> __params;
     private PrintStream __ostream;
-    private Pair<Boolean,Integer> __exitVal;
+    private Pair<Boolean, Integer> __exitVal;
+
+    private static final Set<String> __REQD_PARAMS = toSet("user", "command");
 
     private Run execute() {
         final NodeRun nrun = new NodeRun();
         nrun.run();
         _exchange.close();
         __exitVal = new Pair<>(nrun.isNormalExit(), nrun.getExitValue());
+        //todo: do something w/ exitVal
         return this;
     }
 
     private List<String> getCmdArgs() {
-        List<String> args = toList(__RUNUSER, "-u", __params.get("user"));
-        List<String> cmd = toList(splitArgs(__params.get("command")));
+        List<String> args = toList(__RUNUSER, "-u", get("user"));
+        List<String> cmd = toList(splitArgs(get("command")));
         args.addAll(cmd);
         return args;
     }

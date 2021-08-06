@@ -1,12 +1,11 @@
 package awm.node.subcommand;
 
 import awm.Logger;
+import awm.RequestHandler;
 import awm.node.Main;
 import com.sun.net.httpserver.HttpExchange;
-import awm.RequestHandler;
 
 import java.io.IOException;
-import java.util.Map;
 import java.util.Set;
 
 public class AddJob extends RequestHandler {
@@ -28,6 +27,4 @@ public class AddJob extends RequestHandler {
     protected Set<String> getRequiredParams() {
         return null;
     }
-
-    private Map<String, String> __params;
 }

@@ -26,8 +26,7 @@ public abstract class RequestHandler extends jmvc.server.RequestHandler {
             _request = bodyAsObj();
             if (isNull(_request)) _request = Collections.EMPTY_MAP;
             logger().debug("REQ-2", httpExchange.getRemoteAddress().toString(), _request);
-            checkParams()
-                    .respond();
+            checkParams().respond();
         } catch (IOException e) {
             logger().error(e);
             throw e;
