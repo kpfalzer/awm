@@ -32,7 +32,7 @@ public class Server {
     private void __start() {
         try {
             __server = new MtHttpServer(__host, __port);
-            __server.addRoute("/subcmd/run", Run.handlerFactory());
+            __server.addRoute("/subcmd/run", Run.Handler::new);
             __server.start();
             Thread.currentThread().join();
         } catch (IOException | InterruptedException e) {

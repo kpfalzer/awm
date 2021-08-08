@@ -11,7 +11,6 @@ import java.io.IOException;
 import java.util.Set;
 
 import static gblibx.Util.invariant;
-import static gblibx.Util.supplyIfNull;
 import static gblibx.Util.toSet;
 
 /**
@@ -24,9 +23,8 @@ public class Run {
     }
 
     private Run submit() {
-        //todo: add to dbase, queue...
         return addToDbase()
-                .addToQueue();
+                .enqueue();
     }
 
     private Run addToDbase() {
@@ -36,7 +34,7 @@ public class Run {
         return this;
     }
 
-    private Run addToQueue() {
+    private Run enqueue() {
         final int n = Main.addJob(__job);
         Main.logger().debug("QUEUE-1", __job.toString(), n);
         return this;
@@ -44,25 +42,11 @@ public class Run {
 
     private final PendingJob __job;
 
-    public static class Delegate extends jmvc.server.RequestHandler.Delegate {
-
-        @Override
-        public jmvc.server.RequestHandler create() {
-            return new Run.Handler();
-        }
-    }
-
-    public static Delegate handlerFactory() {
-        return __delegator = supplyIfNull(__delegator, () -> new Delegate());
-    }
-
-    private static Delegate __delegator = null;
-
     private static final Set<String> __REQUIRED_PARMS =
             toSet("user", "command", "host", "mem", "ncore", "priority");
     private static final Set<String> __OPTIONAL_PARMS = toSet("license", "jobName");
 
-    private static class Handler extends RequestHandler {
+    public static class Handler extends RequestHandler {
         public PendingJob toJob() {
             return new PendingJob(
                     get("user"),

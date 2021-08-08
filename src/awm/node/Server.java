@@ -2,7 +2,6 @@ package awm.node;
 
 import awm.node.subcommand.Run;
 import jmvc.server.MtHttpServer;
-import jmvc.server.RequestHandler;
 
 import java.io.IOException;
 
@@ -33,12 +32,7 @@ public class Server {
     private void __start() {
         try {
             __server = new MtHttpServer(__host, __port);
-            //todo: this is NOT multithread?  If many (parallel) requests to /subcmd/run... they all
-            //share this same (new) instance?  Need factory here... RequestHandler.Delegate???
-            __server.addRoute("/subcmd/run",
-                    RequestHandler.handlerFactory(() -> {
-                        return new Run(); //OK: todo: make sure this pattern used elsewhere.
-                    }));
+            __server.addRoute("/subcmd/run", Run::new);
             __server.start();
             Thread.currentThread().join();
         } catch (IOException | InterruptedException e) {
